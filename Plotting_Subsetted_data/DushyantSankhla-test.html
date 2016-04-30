@@ -1,0 +1,694 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html><head><META http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body>
+
+    
+    
+    
+
+<div>
+<div>
+    <h1>
+        Shapeways.com Business Intelligence / HTML Test
+    </h1>
+
+    <h2>
+        Instructions
+    </h2>
+
+    <p>
+        Using the text-editor of your choice, make changes to this HTML document as instructed in the questions
+        below.<br>
+        Each question will be marked with <strong>Q</strong>.<br>
+        Please modify this HTML with your answers (keep all CSS and Javascript in this file).
+        <br><br>
+        <br>
+        Save your test as [yourName]-test.html<br><br>
+        <a>Click here to begin the test</a>
+    </p>
+</div>
+<div>
+    <h2>
+        Questions
+    </h2>
+
+    <div>                   
+            <li><strong>Q:</strong>
+                
+                <h3 style="display:inline"> SQL Question </h3><br>
+                Consider the following tables. The first lists the models each user has purchased. The second lists the models each user has uploaded.<br>
+                <div>
+                <div style="float:left;margin-right:20px">
+                <label><strong>uploaded_models</strong></label>
+                <table>
+                    <thead><th>user_id</th><th>model_id</th></thead>
+                    <tr><td>1</td><td>1</td></tr>
+                    <tr><td>1</td><td>2</td></tr>
+                    <tr><td>1</td><td>3</td></tr>
+                    <tr><td>2</td><td>4</td></tr>
+                    <tr><td>2</td><td>5</td></tr>
+                    <tr><td>2</td><td>6</td></tr>
+                    <tr><td>2</td><td>7</td></tr>
+                    <tr><td>2</td><td>8</td></tr>
+                    <tr><td>3</td><td>9</td></tr>
+                    <tr><td>3</td><td>10</td></tr>
+                    <tr><td>4</td><td>11</td></tr>
+                    <tr><td>4</td><td>12</td></tr>
+                    <tr><td>4</td><td>13</td></tr>
+                    <tr><td>4</td><td>14</td></tr>
+                    <tr><td>4</td><td>15</td></tr>
+                </table>                
+                </div>
+                <div>
+		<label><strong>purchased_models</strong></label>
+                <table>
+                    <thead><th>user_id</th><th>model_id</th></thead>
+                    <tr><td>1</td><td>1</td></tr>
+                    <tr><td>1</td><td>4</td></tr>
+                    <tr><td>1</td><td>9</td></tr>
+                    <tr><td>1</td><td>3</td></tr>
+                    <tr><td>2</td><td>3</td></tr>
+                    <tr><td>2</td><td>2</td></tr>
+                    <tr><td>2</td><td>7</td></tr>
+                    <tr><td>2</td><td>4</td></tr>
+                    <tr><td>3</td><td>9</td></tr>
+                    <tr><td>3</td><td>6</td></tr>
+                    <tr><td>3</td><td>1</td></tr>
+                    <tr><td>3</td><td>5</td></tr>
+                    <tr><td>4</td><td>8</td></tr>
+                    <tr><td>4</td><td>7</td></tr>
+                    <tr><td>4</td><td>9</td></tr>
+                    <tr><td>4</td><td>1</td></tr>
+                    <tr><td>5</td><td>8</td></tr>
+                    <tr><td>5</td><td>9</td></tr>
+                </table>
+                </div>
+                </div>
+
+                <p><strong>For each of the following determine the number of rows that would appear in the result:</strong></p>
+                <p><strong>Q</strong>: SELECT * FROM purchased_models WHERE user_id = 3;</p>
+                <p>A: 4 </p>
+                <p><strong>Q</strong>: SELECT * FROM purchased_models pm JOIN uploaded_models um on pm.user_id = um.user_id;</p>
+                <p>A: 18</p>
+                <p><strong>Q</strong>: SELECT * FROM purchased_models pm LEFT JOIN uploaded_models um on pm.user_id = um.user_id;</p>
+                <p>A: 18</p>
+                <p><strong>Using the above tables, write a query to output a table having the following columns: user_id, number of models that user has purchased, and the number of people that have purchased any of the same models that the user in question has purchased. The result should look like this:</strong></p>
+                <p>A: select t1.user_id, count(distinct t1.model_id) models_purchased, <br>
+                        ( select count(distinct user_id) from purchased_models t2 <br>
+                        where t2.model_id in ( select model_id <br>
+          					                    from purchased_models<br> 
+          					                      where user_id = t1.user_id <br>
+            				                        and t2.user_id <> t1.user_id)<br>
+                                                ) users_purchasing_same_models <br>
+                        from purchased_models t1<br>
+                        group by t1.user_id<br>
+                        order by t1.user_id<br>
+                </p>
+                <div>
+                    <label><strong>Result</strong></label>
+                    <table>
+                        <thead><th>user_id</th><th>models_purchased</th><th>users_purchasing_same_models</th></thead>
+                        <tr><td>1</td><td>4</td><td>4</td></tr>
+                        <tr><td>2</td><td>4</td><td>2</td></tr>
+                        <tr><td>3</td><td>4</td><td>3</td></tr>
+                        <tr><td>4</td><td>4</td><td>4</td></tr>
+                        <tr><td>5</td><td>2</td><td>3</td></tr>
+                    </table>
+                </div>
+                <br>
+                <p><strong>The following query selects all models having more than two purchases as well as all uploaded models that have never been sold. Optimize the following query and explain your reasoning:</strong></p>
+                <p><strong>Q</strong>: <code>SELECT * FROM<br>
+                    (SELECT pm.model_id,all_purchases.<wbr>purchases FROM purchased_models pm<br>
+                      JOIN (SELECT pm2.model_id,COUNT(*) purchases FROM purchased_models pm2 GROUP BY pm2.model_id) all_purchases ON all_purchases.model_id = pm.model_id<br>
+                      WHERE all_purchases.purchases &gt; 2<br>
+                      ORDER BY all_purchases.purchases DESC<br>
+                    ) top_purchases<br>
+                    UNION<br>
+                    SELECT um.model_id,0 FROM uploaded_models um<br>
+                    WHERE um.model_id NOT IN (SELECT model_id FROM purchased_models);</code>
+                </p>
+                <p>A: SELECT u.model_id,COUNT(*) AS Purchases FROM uploaded_models u ,purchased_models p <br>
+                      WHERE u.model_id = p.model_id<br>
+                      GROUP BY u.user_id,p.model_id<br>
+                      HAVING Purchases>2<br>
+                      UNION<br>
+                      SELECT u.model_id,0 FROM uploaded_models u<br>
+                      WHERE u.model_id NOT IN (SELECT model_id FROM purchased_models); </p>
+
+            <li><strong>Q:</strong>
+
+                <h3 style="display:inline"> Data Question </h3><br>
+                —
+                Download the <a href="https://data.cityofnewyork.us/Social-Services/Service-Requests-2015-Present/v9cz-fehg" target="_blank">311 Service Request dataset</a> from NYC OpenData. (Export -&gt; Download -&gt; Download As. It may take several minutes for the download to start.)<br>
+                —
+                Using a subset of the data, include a table and a graph (using <a href="http://www.highcharts.com/download" target="_blank">highcharts</a>) of requests broken down into
+                meaningful groups. You can create the chart at <a href="http://jsfiddle.com" target="_blank">jsfiddle.com</a> but for extra credit make it here.<br>
+                —
+                Explain your choices (subset, groups, etc.). Please include any code (R, Python, etc.) that was used to process the data.<br>
+                
+                <img src="https://raw.githubusercontent.com/SankhlaDushyant/Exploratory-Data-Analysis-Course-Project-2/master/test.png" width=50%></img>
+                
+                
+                <p>
+                #subset 10000 values<br>
+
+                b<-read.csv("Service_Requests_2015_-_Present.csv",header = TRUE,na.strings ="NA",nrows = 10000)<br>
+                names(b)<br>
+                #useful columns for this analysis<br>
+                b<-b[,c(4,6)]<br>
+                c<-table(b$Agency,b$Complaint.Type)<br>
+                c<-as.data.frame(c)<br>
+                colnames(c)<-c("Agency","Complains","Number_Request")<br>
+                #request more than 10 <br>
+                c<-c[c$Number_Request>10,]<br>
+                write.table(c, file = "test.csv", sep = ",", col.names = names(c))<br>
+
+                png("test.png",width=1024,height=1024)<br>
+                ggp <- ggplot(c,aes(Agency,Number_Request,fill=Complains))+<br>
+                  geom_bar(stat = "identity")+<br>
+                    theme_bw()+<br>
+                       labs(title=expression("Number of Request from Different Agencies having Count>10"))+<br>
+                       scale_fill_discrete(guide = "legend")+<br>
+                      theme(legend.position="bottom")<br>
+                print(ggp)<br>
+            dev.off()<br>
+            </p>
+
+<table class="table table-bordered table-hover table-condensed">
+<tbody><tr><td align="right"></td>
+<td>Agency</td>
+<td>Complains</td>
+<td>Number_Request</td>
+</tr>
+<tr><td align="right">30</td>
+<td>DPR</td>
+<td>Agency Issues</td>
+<td>18</td>
+</tr>
+<tr><td align="right">41</td>
+<td>DEP</td>
+<td>Air Quality</td>
+<td>52</td>
+</tr>
+<tr><td align="right">74</td>
+<td>NYPD</td>
+<td>Animal Abuse</td>
+<td>61</td>
+</tr>
+<tr><td align="right">87</td>
+<td>DPR</td>
+<td>Animal in a Park</td>
+<td>11</td>
+</tr>
+<tr><td align="right">110</td>
+<td>HPD</td>
+<td>APPLIANCE</td>
+<td>58</td>
+</tr>
+<tr><td align="right">149</td>
+<td>HRA</td>
+<td>Benefit Card Replacement</td>
+<td>184</td>
+</tr>
+<tr><td align="right">226</td>
+<td>NYPD</td>
+<td>Blocked Driveway</td>
+<td>524</td>
+</tr>
+<tr><td align="right">276</td>
+<td>DOT</td>
+<td>Broken Muni Meter</td>
+<td>210</td>
+</tr>
+<tr><td align="right">295</td>
+<td>DOT</td>
+<td>Broken Parking Meter</td>
+<td>15</td>
+</tr>
+<tr><td align="right">309</td>
+<td>DOB</td>
+<td>Building/Use</td>
+<td>137</td>
+</tr>
+<tr><td align="right">401</td>
+<td>DCA</td>
+<td>Consumer Complaint</td>
+<td>95</td>
+</tr>
+<tr><td align="right">447</td>
+<td>DOT</td>
+<td>Curb Condition</td>
+<td>14</td>
+</tr>
+<tr><td align="right">467</td>
+<td>DPR</td>
+<td>Damaged Tree</td>
+<td>79</td>
+</tr>
+<tr><td align="right">496</td>
+<td>DCA</td>
+<td>DCA / DOH New License Application Request</td>
+<td>16</td>
+</tr>
+<tr><td align="right">543</td>
+<td>DPR</td>
+<td>Dead/Dying Tree</td>
+<td>33</td>
+</tr>
+<tr><td align="right">582</td>
+<td>DSNY</td>
+<td>Derelict Bicycle</td>
+<td>11</td>
+</tr>
+<tr><td align="right">606</td>
+<td>NYPD</td>
+<td>Derelict Vehicle</td>
+<td>171</td>
+</tr>
+<tr><td align="right">620</td>
+<td>DSNY</td>
+<td>Derelict Vehicles</td>
+<td>111</td>
+</tr>
+<tr><td align="right">639</td>
+<td>DSNY</td>
+<td>Dirty Conditions</td>
+<td>106</td>
+</tr>
+<tr><td align="right">672</td>
+<td>DOF</td>
+<td>DOF Literature Request</td>
+<td>166</td>
+</tr>
+<tr><td align="right">691</td>
+<td>DOF</td>
+<td>DOF Property - Reduction Issue</td>
+<td>12</td>
+</tr>
+<tr><td align="right">710</td>
+<td>DOF</td>
+<td>DOF Property - Update Account</td>
+<td>33</td>
+</tr>
+<tr><td align="right">737</td>
+<td>HPD</td>
+<td>DOOR/WINDOW</td>
+<td>179</td>
+</tr>
+<tr><td align="right">751</td>
+<td>DOT</td>
+<td>DOT Literature Request</td>
+<td>24</td>
+</tr>
+<tr><td align="right">832</td>
+<td>HPD</td>
+<td>ELECTRIC</td>
+<td>128</td>
+</tr>
+<tr><td align="right">841</td>
+<td>DOB</td>
+<td>Electrical</td>
+<td>17</td>
+</tr>
+<tr><td align="right">860</td>
+<td>DOB</td>
+<td>Elevator</td>
+<td>57</td>
+</tr>
+<tr><td align="right">1002</td>
+<td>FDNY</td>
+<td>Fire Safety Director - F58</td>
+<td>48</td>
+</tr>
+<tr><td align="right">1022</td>
+<td>HPD</td>
+<td>FLOORING/STAIRS</td>
+<td>154</td>
+</tr>
+<tr><td align="right">1034</td>
+<td>DOHMH</td>
+<td>Food Establishment</td>
+<td>40</td>
+</tr>
+<tr><td align="right">1053</td>
+<td>DOHMH</td>
+<td>Food Poisoning</td>
+<td>22</td>
+</tr>
+<tr><td align="right">1083</td>
+<td>TLC</td>
+<td>For Hire Vehicle Complaint</td>
+<td>21</td>
+</tr>
+<tr><td align="right">1136</td>
+<td>HPD</td>
+<td>GENERAL</td>
+<td>159</td>
+</tr>
+<tr><td align="right">1145</td>
+<td>DOB</td>
+<td>General Construction/Plumbing</td>
+<td>143</td>
+</tr>
+<tr><td align="right">1171</td>
+<td>DSNY</td>
+<td>Graffiti</td>
+<td>69</td>
+</tr>
+<tr><td align="right">1181</td>
+<td>DEP</td>
+<td>Hazardous Materials</td>
+<td>14</td>
+</tr>
+<tr><td align="right">1212</td>
+<td>HPD</td>
+<td>HEAT/HOT WATER</td>
+<td>633</td>
+</tr>
+<tr><td align="right">1226</td>
+<td>DOT</td>
+<td>Highway Condition</td>
+<td>32</td>
+</tr>
+<tr><td align="right">1252</td>
+<td>NYPD</td>
+<td>Homeless Encampment</td>
+<td>14</td>
+</tr>
+<tr><td align="right">1258</td>
+<td>DHS</td>
+<td>Homeless Person Assistance</td>
+<td>153</td>
+</tr>
+<tr><td align="right">1288</td>
+<td>HPD</td>
+<td>HPD Literature Request</td>
+<td>26</td>
+</tr>
+<tr><td align="right">1328</td>
+<td>NYPD</td>
+<td>Illegal Parking</td>
+<td>560</td>
+</tr>
+<tr><td align="right">1341</td>
+<td>DPR</td>
+<td>Illegal Tree Damage</td>
+<td>15</td>
+</tr>
+<tr><td align="right">1357</td>
+<td>DOHMH</td>
+<td>Indoor Air Quality</td>
+<td>23</td>
+</tr>
+<tr><td align="right">1428</td>
+<td>DEP</td>
+<td>Lead</td>
+<td>99</td>
+</tr>
+<tr><td align="right">1474</td>
+<td>DPR</td>
+<td>Maintenance or Facility</td>
+<td>46</td>
+</tr>
+<tr><td align="right">1494</td>
+<td>DSNY</td>
+<td>Missed Collection (All Materials)</td>
+<td>88</td>
+</tr>
+<tr><td align="right">1531</td>
+<td>DPR</td>
+<td>New Tree Request</td>
+<td>130</td>
+</tr>
+<tr><td align="right">1542</td>
+<td>DEP</td>
+<td>Noise</td>
+<td>295</td>
+</tr>
+<tr><td align="right">1575</td>
+<td>NYPD</td>
+<td>Noise - Commercial</td>
+<td>181</td>
+</tr>
+<tr><td align="right">1632</td>
+<td>NYPD</td>
+<td>Noise - Residential</td>
+<td>667</td>
+</tr>
+<tr><td align="right">1651</td>
+<td>NYPD</td>
+<td>Noise - Street/Sidewalk</td>
+<td>135</td>
+</tr>
+<tr><td align="right">1670</td>
+<td>NYPD</td>
+<td>Noise - Vehicle</td>
+<td>62</td>
+</tr>
+<tr><td align="right">1689</td>
+<td>NYPD</td>
+<td>Non-Emergency Police Matter</td>
+<td>39</td>
+</tr>
+<tr><td align="right">1722</td>
+<td>DSNY</td>
+<td>Other Enforcement</td>
+<td>21</td>
+</tr>
+<tr><td align="right">1778</td>
+<td>DPR</td>
+<td>Overgrown Tree/Branches</td>
+<td>40</td>
+</tr>
+<tr><td align="right">1801</td>
+<td>HPD</td>
+<td>PAINT/PLASTER</td>
+<td>304</td>
+</tr>
+<tr><td align="right">1810</td>
+<td>DOB</td>
+<td>Plumbing</td>
+<td>13</td>
+</tr>
+<tr><td align="right">1839</td>
+<td>HPD</td>
+<td>PLUMBING</td>
+<td>286</td>
+</tr>
+<tr><td align="right">1946</td>
+<td>DOHMH</td>
+<td>Rodent</td>
+<td>101</td>
+</tr>
+<tr><td align="right">1968</td>
+<td>DPR</td>
+<td>Root/Sewer/Sidewalk Condition</td>
+<td>45</td>
+</tr>
+<tr><td align="right">1991</td>
+<td>HPD</td>
+<td>SAFETY</td>
+<td>52</td>
+</tr>
+<tr><td align="right">2007</td>
+<td>DSNY</td>
+<td>Sanitation Condition</td>
+<td>98</td>
+</tr>
+<tr><td align="right">2040</td>
+<td>DOF</td>
+<td>SCRIE</td>
+<td>44</td>
+</tr>
+<tr><td align="right">2055</td>
+<td>DEP</td>
+<td>Sewer</td>
+<td>139</td>
+</tr>
+<tr><td align="right">2081</td>
+<td>DOT</td>
+<td>Sidewalk Condition</td>
+<td>28</td>
+</tr>
+<tr><td align="right">2098</td>
+<td>DOHMH</td>
+<td>Smoking</td>
+<td>11</td>
+</tr>
+<tr><td align="right">2114</td>
+<td>DOB</td>
+<td>Special Enforcement</td>
+<td>16</td>
+</tr>
+<tr><td align="right">2152</td>
+<td>DOB</td>
+<td>Special Projects Inspection Team (SPIT)</td>
+<td>16</td>
+</tr>
+<tr><td align="right">2174</td>
+<td>DOHMH</td>
+<td>Standing Water</td>
+<td>21</td>
+</tr>
+<tr><td align="right">2195</td>
+<td>DOT</td>
+<td>Street Condition</td>
+<td>615</td>
+</tr>
+<tr><td align="right">2214</td>
+<td>DOT</td>
+<td>Street Light Condition</td>
+<td>405</td>
+</tr>
+<tr><td align="right">2233</td>
+<td>DOT</td>
+<td>Street Sign - Damaged</td>
+<td>49</td>
+</tr>
+<tr><td align="right">2252</td>
+<td>DOT</td>
+<td>Street Sign - Dangling</td>
+<td>11</td>
+</tr>
+<tr><td align="right">2271</td>
+<td>DOT</td>
+<td>Street Sign - Missing</td>
+<td>41</td>
+</tr>
+<tr><td align="right">2337</td>
+<td>TLC</td>
+<td>Taxi Complaint</td>
+<td>100</td>
+</tr>
+<tr><td align="right">2356</td>
+<td>TLC</td>
+<td>Taxi Report</td>
+<td>13</td>
+</tr>
+<tr><td align="right">2373</td>
+<td>NYPD</td>
+<td>Traffic</td>
+<td>31</td>
+</tr>
+<tr><td align="right">2385</td>
+<td>DOT</td>
+<td>Traffic Signal Condition</td>
+<td>165</td>
+</tr>
+<tr><td align="right">2466</td>
+<td>HPD</td>
+<td>UNSANITARY CONDITION</td>
+<td>354</td>
+</tr>
+<tr><td align="right">2549</td>
+<td>DEP</td>
+<td>Water Conservation</td>
+<td>17</td>
+</tr>
+<tr><td align="right">2580</td>
+<td>HPD</td>
+<td>WATER LEAK</td>
+<td>161</td>
+</tr>
+<tr><td align="right">2606</td>
+<td>DEP</td>
+<td>Water System</td>
+<td>205</td>
+</tr>
+</tbody></table>
+
+<p>
+the reason this data subset is appropriate for an analysis of the data set is : <br>
+1. It accommodates 10000 values which a high enough index to calculate an appropriate pattern among the data.<br>
+2. The data has enough variety to deduce a general relation between the data set which is important to plot a visually understandable graph.<br>
+3. The Parameters i choose are "Agency","Complains"and "Number_Request" which give a general idea of the service request to any user.<br>
+4. The main challenge of the dataset is missing values which i accounted for with the condition (>10 requests).<br>
+</p>
+            </li>
+             <li><strong>Q:</strong>
+                <h3 style="display:inline">HTML/CSS Question</h3>
+                <ul>
+                    <li>
+                        Add a semi-transparent box which is centered on the screen.
+                    </li>
+                    <li>
+                        Give the box a 3px black border.
+                    </li>
+                    <li>
+                        Make the background of the box periwinkle blue.
+                    </li>
+                    <li>
+                        Make the box 500px wide and 257px tall.
+                    </li>
+                    <li>
+                        Include a paragraph of green sample text in the box.
+                    </li>
+                    <li>
+                        <strong>BONUS:</strong>
+                        Have a link in the top right corner which closes the box.
+                    </li>
+                
+                </ul>
+                <div style="background:rgba(204,204,255,0.5);
+                     width: 500px;
+                     height: 257px;
+                     padding: 10px;
+                     border: 3px solid black;
+                     margin: auto;">
+                    <font color="green">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                    </font>
+             </div>
+            </li>
+            <li><strong>Q:</strong>
+
+                <h3 style="display:inline"> Programming Question </h3><br>
+                <ol>
+                    <li> Show how to include a variable in a page using PHP</li>
+                    <p> $a = “123”;<br>
+                        $name = “Hello World”;<br>
+                    </p>
+                    <li> Show how to loop over a collection of elements in PHP</li>
+                    <p>$arr = array(1,2,3);<br>
+                       foreach ($arr as &$val) {<br>
+                       $val = $val+1;<br>
+                       }<br>
+                       After executing this, $arr is now array(2,3,4)<br>
+                    </p>
+                    <li> Show an IF/ELSEIF/ELSE conditional in PHP</li>
+                    <p>if ($a > $b) <br>
+                       { <br>
+                         echo "a is greater”;<br>
+                        }<br>
+
+                        elseif ($a == $b)<br>
+                        {<br>
+                          echo "a and b are equal”;<br>
+                        } <br>
+
+                        else<br>
+                        {<br>
+                           echo “b is greater“;<br>
+                        }<br>
+                    </p>
+                </ol>
+            </li>           
+            <li><strong>Q:</strong>
+                <h3 style="display:inline"> Concept Question </h3><br>
+                What is a data warehouse and why would it be needed?
+            </li>
+            <p>
+            A. Data warehousing emphasizes the capture of data from diverse sources for useful analysis and access. <br>
+            For a company to be successful in the future, they must make good decisions and to make good decisions requires all relevant data to be taking into consideration, and the best source for that data is a well-designed data warehouse<br>
+            </p>
+            <li><strong>Q:</strong>
+                How does Shapeways make money?
+                <p>
+                A. Mostly by 3D printing work ( Games, Accessories, Designs, Jewelry etc....). 
+                </p>
+            </li>
+        
+    </li></div>
+</div>
+</div>
+
+</body></html>
